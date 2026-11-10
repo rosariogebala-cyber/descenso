@@ -1,1 +1,95 @@
-null
+{
+  "importSource": "supabase-meals-2026-10-31",
+  "measurements": [],
+  "meals": [
+    {
+      "id": "cd96d908-d911-45db-bdcc-7d3ab6a1e064",
+      "date": "2026-10-19",
+      "type": "Desayuno",
+      "description": "Huevos con pan integral y queso — 2 huevos + 2 rodajas de pan integral + queso magro 30 g + aceite de oliva 1 cdita"
+    },
+    {
+      "id": "4ccc7ee8-395d-4e27-a6dd-523dea82150a",
+      "date": "2026-10-19",
+      "type": "Almuerzo",
+      "description": "Pollo con arroz y palta — Pechuga de pollo 170 g (o carne magra 170 g) + arroz 200 g + 1/2 palta + verduras a gusto"
+    },
+    {
+      "id": "e6bfcf28-e440-47f2-a76f-b388185d40a4",
+      "date": "2026-10-19",
+      "type": "Merienda",
+      "description": "Galletas de arroz con jamón y queso — 2 galletas de arroz + jamón 40 g + queso magro 30 g + 1 huevo duro"
+    },
+    {
+      "id": "c25217aa-15f8-41bd-a31d-8e24657f74e5",
+      "date": "2026-10-19",
+      "type": "Cena",
+      "description": "Carne con arroz — Carne molida magra 170 g + papa 100g + aceite de oliva 1 cdita + verduras a gusto"
+    },
+    {
+      "id": "514b3ce7-d1fc-467d-8205-26068793705d",
+      "date": "2026-10-20",
+      "type": "Desayuno",
+      "description": "Huevos con pan integral y queso — 2 huevos + 2 rodajas de pan integral + queso magro 30 g + aceite de oliva 1 cdita"
+    },
+    {
+      "id": "fa3bda40-111a-487e-b8fd-b57ff5cd18c3",
+      "date": "2026-10-20",
+      "type": "Almuerzo",
+      "description": "Pollo con arroz y palta — Pechuga de pollo 170 g (o carne magra 170 g) + arroz 200 g + 1/2 palta + verduras a gusto"
+    },
+    {
+      "id": "5a7680a4-feb4-470b-8791-45bed8eebac4",
+      "date": "2026-10-20",
+      "type": "Merienda",
+      "description": "Galletas de arroz con jamón y queso — 2 galletas de arroz + jamón 40 g + queso magro 30 g + 1 huevo duro"
+    },
+    {
+      "id": "e0f94467-138e-444f-840e-76e29812eef4",
+      "date": "2026-10-20",
+      "type": "Cena",
+      "description": "Carne con arroz — Carne molida magra 170 g + arroz 160 g + aceite de oliva 1 cdita + verduras a gusto"
+    },
+    {
+      "id": "9559abc4-593e-40be-af3b-aae2d64c4402",
+      "date": "2026-10-21",
+      "type": "Desayuno",
+      "description": "Huevos con pan integral y queso — 2 huevos + 2 rodajas de pan integral + queso magro 30 g + aceite de oliva 1 cdita"
+    },
+    {
+      "id": "e8216e05-23cd-460a-8e76-3824722cf779",
+      "date": "2026-10-24",
+      "type": "Desayuno",
+      "description": "Huevos con pan integral y queso — 2 huevos + 2 rodajas de pan integral + queso magro 30 g + aceite de oliva 1 cdita"
+    },
+    {
+      "id": "6d06ef65-f6e7-4023-895b-8e439f69ad0e",
+      "date": "2026-10-26",
+      "type": "Desayuno",
+      "description": "Huevos con pan integral y queso — 2 huevos + 2 rodajas de pan integral + queso magro 30 g + aceite de oliva 1 cdita"
+    },
+    {
+      "id": "b09777fa-abcc-437a-8a4b-ab9a1bdece38",
+      "date": "2026-10-25",
+      "type": "Desayuno",
+      "description": "Huevos con pan integral y queso — 2 huevos + 2 rodajas de pan integral + queso magro 30 g + aceite de oliva 1 cdita"
+    },
+    {
+      "id": "328b04dd-c4d8-4289-9a7d-427e8d0d017b",
+      "date": "2026-10-25",
+      "type": "Merienda",
+      "description": "Galletas de arroz con jamón y queso — 2 galletas de arroz + jamón 40 g + queso magro 30 g + 1 huevo duro"
+    },
+    {
+      "id": "274a6b35-eeef-40e7-bd89-774958099972",
+      "date": "2026-10-25",
+      "type": "Cena",
+      "description": "Carne con arroz — Carne molida magra 170 g + arroz 160 g + aceite de oliva 1 cdita + verduras a gusto"
+    }
+  ],
+  "activity": [],
+  "goals": {
+    "weight": 68,
+    "notes": ""
+  }
+}
