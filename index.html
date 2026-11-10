@@ -449,6 +449,7 @@ function githubLoad(){
   if(file.encoding!=='base64' || !file.content) throw Error('El respaldo supera el tamaño que admite esta versión.');
   const bytes=Uint8Array.from(atob(file.content.replace(/\s/g,'')), character=>character.charCodeAt(0));
   const incoming=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+  if(incoming===null) return 'Todavía no hay registros en GitHub. Podés guardar tus registros.';
   if(!validBackup(incoming)) throw Error('El JSON de GitHub no tiene un formato de Descenso válido.');
   if(!confirm('¿Traer el respaldo de GitHub? Se descargará una copia de tus datos actuales antes de reemplazarlos en este navegador.')) return 'Carga cancelada.';
   backupBeforeReplace();
@@ -471,9 +472,11 @@ function githubSave(){
   if(bytes.length>900*1024) throw Error('El respaldo supera 900 KiB. Descargá un JSON local para conservar todas tus fotos.');
   const repo=await githubPrivateRepo(githubState.token);
   const branch=repo.default_branch;
-  const sha=githubFileSha(await githubRead(branch));
+  const file=await githubRead(branch);
+  const sha=githubFileSha(file);
   const previous=localStorage.getItem(githubRevisionKey);
-  if((sha && sha!==previous) || (!sha && previous)) throw Error('El archivo de GitHub cambió o falta. Conservá una copia local y revisá el respaldo remoto antes de guardar.');
+  const starter=file?.encoding==='base64' && file.content?.replace(/\s/g,'')==='bnVsbAo=';
+  if((sha && sha!==previous && !(starter && !previous)) || (!sha && previous)) throw Error('El archivo de GitHub cambió o falta. Conservá una copia local y revisá el respaldo remoto antes de guardar.');
   if(!confirm('¿Guardar tus registros y fotos en el repositorio privado rosariogebala-cyber/descenso? GitHub conserva versiones anteriores del JSON.')) return 'Guardado cancelado.';
   const result=await githubRequest(githubPath,githubState.token,{body:{
    message:'Actualizar respaldo de Descenso',content:githubBase64(bytes),branch,...(sha?{sha}:{})
