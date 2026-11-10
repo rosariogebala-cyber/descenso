@@ -27,7 +27,7 @@ function newId(){if(globalThis.crypto?.randomUUID)return crypto.randomUUID();ret
 const KEY='descenso-v1';const initial={measurements:[],meals:[],activity:[],goals:{weight:68,notes:''}};
 
 function safeRecordId(id,fallback){return typeof id==="string"&&/^[a-z0-9:_-]+$/i.test(id)?id:fallback}
-function validBackup(x){return !!x&&typeof x==='object'&&!Array.isArray(x)&&['measurements','meals','activity'].every(k=>Array.isArray(x[k])&&x[k].length<100000&&x[k].every(v=>v&&typeof v==='object'&&!Array.isArray(v)&&typeof v.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v.date)))&&x.goals&&typeof x.goals==='object'&&Number.isFinite(Number(x.goals.weight))&&Number(x.goals.weight)>0&&(!x.tracking||Array.isArray(x.tracking))&&(!x.weeklyReports||Array.isArray(x.weeklyReports))}function safeBackupName(){return 'descenso-respaldo-previo-'+new Date().toISOString().slice(0,10)+'.json'}function backupBeforeReplace(){download(safeBackupName(),JSON.stringify(data,null,2),'application/json')}let data;try{const stored=JSON.parse(localStorage.getItem(KEY));data=validBackup(stored)?stored:structuredClone(initial);if(stored&&!validBackup(stored))console.warn('Datos locales con formato inesperado; se evita procesarlos')}catch{data=structuredClone(initial)};let tab='dashboard',weekSection='measurements',metric='weight',selectedWeek=null,compareCategory='measurements',compareMetric='weight',compareLimit='8',selectedMealDay=null; data.settings={weekStartDay:6,startWeight:70,heightCm:null,planStartDate:today(),mealOptions:{},...(data.settings||{})};data.weeklyPhotos=(data.weeklyPhotos&&typeof data.weeklyPhotos==='object')?data.weeklyPhotos:{};data.settings.mealOptions={...(data.settings.mealOptions||{})};['Almuerzo','Cena'].forEach(type=>{if(!Array.isArray(data.settings.mealOptions[type]))data.settings.mealOptions[type]=[]});data.settings.weekStartDay=Number(data.settings.weekStartDay);if(!Number.isInteger(data.settings.weekStartDay)||data.settings.weekStartDay<0||data.settings.weekStartDay>6)data.settings.weekStartDay=1;if(!/^\d{4}-\d{2}-\d{2}$/.test(data.settings.planStartDate))data.settings.planStartDate=today();/* Set Saturday once for this app update; preserve all other user data. */try{if(localStorage.getItem('descenso-saturday-default-v24')!=='done'){data.settings.weekStartDay=6;localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem('descenso-saturday-default-v24','done')}}catch(e){console.warn('No se pudo persistir la preferencia de sábado',e)}if(!Array.isArray(data.tracking))data.tracking=[];if(!Array.isArray(data.weeklyReports))data.weeklyReports=[];const fields={weight:'Peso (kg)',armLeft:'Bíceps izquierdo (cm)',armRight:'Bíceps derecho (cm)',chest:'Pecho (cm)',waist:'Cintura (cm)',hip:'Cadera (cm)',glute:'Glúteos (cm)',thighLeft:'Muslo izquierdo (cm)',thighRight:'Muslo derecho (cm)'};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const fmt=x=>x==null?'—':Number(x).toLocaleString('es-AR',{maximumFractionDigits:2});function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}function today(){return isoDate(new Date())}const ordered=arr=>[...arr].sort((a,b)=>a.date.localeCompare(b.date));const last=()=>ordered(data.measurements).at(-1)||{};const first=()=>ordered(data.measurements)[0]||{};function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));const saved=JSON.parse(localStorage.getItem(KEY));if(!saved||JSON.stringify(saved)!==JSON.stringify(data))throw Error('No se verificó el guardado');showSaved();return true}catch(e){alert('No se pudieron guardar los cambios: '+e.message+'. Exportá un respaldo.');return false}}function showSaved(){let el=document.getElementById('save-status');if(el){el.textContent='✓ Cambios guardados en este navegador';el.setAttribute('aria-live','polite')}}function save(){if(persist())render()}function nav(){document.getElementById('nav').innerHTML=[['dashboard','Dashboard'],['week','Semana'],['goals','Objetivos'],['plan','📋 Mi plan'],['settings','⚙ Configuración']].map(([id,n])=>`<button class="${tab===id?'active':''}" onclick="tab='${id}';render()">${n}</button>`).join('')}
+function validBackup(x){return !!x&&typeof x==='object'&&!Array.isArray(x)&&['measurements','meals','activity'].every(k=>Array.isArray(x[k])&&x[k].length<100000&&x[k].every(v=>v&&typeof v==='object'&&!Array.isArray(v)&&typeof v.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v.date)))&&x.goals&&typeof x.goals==='object'&&Number.isFinite(Number(x.goals.weight))&&Number(x.goals.weight)>0&&(!x.tracking||Array.isArray(x.tracking))&&(!x.weeklyReports||Array.isArray(x.weeklyReports))}function safeBackupName(){return 'descenso-respaldo-previo-'+new Date().toISOString().slice(0,10)+'.json'}function backupBeforeReplace(){download(safeBackupName(),JSON.stringify(data,null,2),'application/json')}let data;try{const stored=JSON.parse(localStorage.getItem(KEY));data=validBackup(stored)?stored:structuredClone(initial);if(stored&&!validBackup(stored))console.warn('Datos locales con formato inesperado; se evita procesarlos')}catch{data=structuredClone(initial)};let tab='dashboard',weekSection='measurements',metric='weight',selectedWeek=null,compareCategory='measurements',compareMetric='weight',compareLimit='8',selectedMealDay=null; data.settings={weekStartDay:6,startWeight:70,heightCm:null,planStartDate:today(),mealOptions:{},...(data.settings||{})};data.weeklyPhotos=(data.weeklyPhotos&&typeof data.weeklyPhotos==='object')?data.weeklyPhotos:{};data.settings.mealOptions={...(data.settings.mealOptions||{})};['Almuerzo','Cena'].forEach(type=>{if(!Array.isArray(data.settings.mealOptions[type]))data.settings.mealOptions[type]=[]});data.settings.weekStartDay=Number(data.settings.weekStartDay);if(!Number.isInteger(data.settings.weekStartDay)||data.settings.weekStartDay<0||data.settings.weekStartDay>6)data.settings.weekStartDay=1;if(!/^\d{4}-\d{2}-\d{2}$/.test(data.settings.planStartDate))data.settings.planStartDate=today();/* Set Saturday once for this app update; preserve all other user data. */try{if(localStorage.getItem('descenso-saturday-default-v24')!=='done'){data.settings.weekStartDay=6;localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem('descenso-saturday-default-v24','done')}}catch(e){console.warn('No se pudo persistir la preferencia de sábado',e)}if(!Array.isArray(data.tracking))data.tracking=[];if(!Array.isArray(data.weeklyReports))data.weeklyReports=[];const fields={weight:'Peso (kg)',armLeft:'Bíceps izquierdo (cm)',armRight:'Bíceps derecho (cm)',chest:'Pecho (cm)',waist:'Cintura (cm)',hip:'Cadera (cm)',glute:'Glúteos (cm)',thighLeft:'Muslo izquierdo (cm)',thighRight:'Muslo derecho (cm)'};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const fmt=x=>x==null?'—':Number(x).toLocaleString('es-AR',{maximumFractionDigits:2});function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}function today(){return isoDate(new Date())}const ordered=arr=>[...arr].sort((a,b)=>a.date.localeCompare(b.date));const last=()=>ordered(data.measurements).at(-1)||{};const first=()=>ordered(data.measurements)[0]||{};function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));const saved=JSON.parse(localStorage.getItem(KEY));if(!saved||JSON.stringify(saved)!==JSON.stringify(data))throw Error('No se verificó el guardado');showSaved();writeDiskCopy();return true}catch(e){if(diskState.file){writeDiskCopy();return true}alert('No se pudieron guardar los cambios: '+e.message+'. Exportá un respaldo.');return false}}function showSaved(){let el=document.getElementById('save-status');if(el){el.textContent='✓ Cambios guardados en este navegador';el.setAttribute('aria-live','polite')}}function save(){if(persist())render()}function nav(){document.getElementById('nav').innerHTML=[['dashboard','Dashboard'],['week','Semana'],['goals','Objetivos'],['plan','📋 Mi plan'],['settings','⚙ Configuración']].map(([id,n])=>`<button class="${tab===id?'active':''}" onclick="tab='${id}';render()">${n}</button>`).join('')}
 function weeklySummary(){const ms=ordered(data.measurements).filter(inWeek),food=data.meals.filter(inWeek),acts=data.activity.filter(inWeek),tracks=(data.tracking||[]).filter(inWeek),latest=ms.at(-1),prior=ordered(data.measurements).filter(x=>x.date<selectedWeek).at(-1);return `<h2>Resumen · ${weekLabel(selectedWeek)}</h2><p class="muted">Resumen de los registros de la semana seleccionada.</p><div class="cards"><div class="card"><small>Mediciones</small><div class="metric">${ms.length}</div><small>${latest?.weight!=null?'Último peso: '+fmt(latest.weight)+' kg':'Sin peso registrado'}</small></div><div class="card"><small>Comidas</small><div class="metric">${food.length}</div><small>${new Set(food.map(x=>x.date)).size} días con registros</small></div><div class="card"><small>Actividades</small><div class="metric">${acts.length}</div><small>${acts.reduce((n,x)=>n+(Number(x.steps)||0),0).toLocaleString('es-AR')} pasos registrados</small></div><div class="card"><small>Cambio de peso</small><div class="metric">${latest?.weight!=null&&prior?.weight!=null?(latest.weight-prior.weight>0?'+':'')+fmt(latest.weight-prior.weight)+' kg':'—'}</div><small>Respecto a la última medición anterior</small></div></div><section class="panel"><h3>Detalle de la semana</h3><p><b>Mediciones:</b> ${ms.length} registros</p><p><b>Comidas:</b> ${food.length} registros</p><p><b>Actividad:</b> ${acts.length} registros</p><p><b>Seguimiento:</b> ${tracks.length?"Completado":"Pendiente"}</p><button class="primary" onclick="tab='week';render()">Ver semana y editar registros →</button></section>`}
 function weekContent(){return ({measurements,meals,activity,tracking,weeklyReport}[weekSection]||measurements)()}
 function chart(key){const points=ordered(data.measurements).filter(x=>x[key]!==null&&x[key]!==undefined&&Number.isFinite(Number(x[key])));if(!points.length)return '<p class="muted">Todavía no hay registros para esta medida.</p>';const values=points.map(x=>x[key]),lo=Math.min(...values),hi=Math.max(...values),range=hi-lo||1;const W=650,H=220,pad=36;const xy=points.map((p,i)=>[(pad+(points.length===1?.5:i/(points.length-1))*(W-pad*2)),(H-pad-(p[key]-lo)/range*(H-pad*2))]);return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${esc(fields[key])}"><line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#d9dfeb"/><line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H-pad}" stroke="#d9dfeb"/><polyline points="${xy.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#4d79af" stroke-width="3"/>${xy.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#4d79af"><title>${points[i].date}: ${fmt(points[i][key])}</title></circle><text x="${p[0]}" y="${p[1]-12}" text-anchor="middle" font-size="12" fill="#375b8b">${fmt(points[i][key])}</text><text x="${p[0]}" y="${H-8}" text-anchor="middle" font-size="11" fill="#718096">${points[i].date.slice(5).split('-').reverse().join('/')}</text>`).join('')}</svg></div><p class="legend">Cada punto corresponde a un registro real; los días intermedios no fueron medidos.</p>`}
@@ -281,7 +281,7 @@ function openWeekSection(section){
 function inWeek(x){return x.date>=selectedWeek&&x.date<=weekEnd(selectedWeek)}
 function defaultWeekDate(){const t=today();return t>=selectedWeek&&t<=weekEnd(selectedWeek)?t:selectedWeek}
 function checkWeekDate(date){if(!inWeek({date})){alert('La fecha debe pertenecer a la semana seleccionada: '+weekLabel(selectedWeek));return false}return true}
-function settings(){return `<h2>⚙ Configuración</h2>${githubPanel()}<section class="panel"><h3>Respaldo de información</h3><p class="muted">Descargá un respaldo antes de borrar datos del navegador o para importar un historial anterior.</p><button onclick="exportJSON()">Descargar respaldo JSON</button> <label style="margin-top:16px">Importar respaldo JSON</label><input type="file" accept="application/json,.json" onchange="importJSON(event)"><p><button onclick="if(confirm('¿Restaurar datos iniciales? Se perderán los cambios locales.')){data=structuredClone(initial);data.tracking=[];data.settings={weekStartDay:6,startWeight:70,heightCm:null,planStartDate:today()};selectedWeek=weekStart(today());save()}">Restaurar datos iniciales</button></p></section><p id="save-status" class="muted" aria-live="polite">Los cambios se guardan al pulsar Guardar. Se conservan en este navegador.</p><section class="panel"><h3>Datos personales y objetivo</h3><p class="muted">Estos valores se usan como referencia para el resumen general. Cambiarlos no modifica las mediciones históricas.</p><form onsubmit="setProfile(event)"><div class="formgrid"><div><label for="startWeight">Peso inicial (kg)</label><input id="startWeight" name="startWeight" type="number" min="1" max="500" step="0.1" value="${esc(data.settings.startWeight??'')}" required></div><div><label for="heightCm">Altura (cm)</label><input id="heightCm" name="heightCm" type="number" min="50" max="250" step="0.1" placeholder="Ej.: 165" value="${esc(data.settings.heightCm??'')}"></div><div><label for="targetWeight">Peso objetivo (kg)</label><input id="targetWeight" name="targetWeight" type="number" min="1" max="500" step="0.1" value="${esc(data.goals.weight??'')}" required></div></div><p><button class="primary" type="submit">Guardar datos personales</button></p><p class="muted">Los cambios se aplican al pulsar Guardar.</p></form></section><section class="panel"><h3>Inicio del plan y de las semanas</h3><p class="muted">La Semana 1 contiene la fecha de inicio del plan y comienza el día de semana que elijas. Cada semana tiene 7 días consecutivos. Los registros anteriores se conservan.</p><form onsubmit="setPlanStart(event)"><label for="planStartDate">Fecha de inicio del plan</label><input id="planStartDate" type="date" name="planStartDate" value="${esc(data.settings.planStartDate)}" required style="max-width:320px"><p><button class="primary" type="submit">Guardar inicio del plan</button></p></form><p class="muted">Podés cambiar el primer día de la semana sin modificar la fecha de inicio del plan. La Semana 1 es la que contiene la fecha de inicio del plan. Se conservan los registros originales.</p><form onsubmit="setSettings(event)"><label for="weekStartDay">Primer día de la semana</label><select id="weekStartDay" name="weekStartDay" style="max-width:320px">${dayNames.map((name,i)=>`<option value="${i}" ${data.settings.weekStartDay===i?'selected':''}>${name.charAt(0).toUpperCase()+name.slice(1)}</option>`).join('')}</select><p><button class="primary" type="submit">Guardar inicio de semana</button></p><p class="muted">Al pulsar Guardar se reorganizan todas las semanas.</p></form><p id="week-save-confirmation" class="muted" role="status">Actual: ${dayNames[data.settings.weekStartDay]} a ${dayNames[(data.settings.weekStartDay+6)%7]}. Semana actual: ${weekLabel(weekStart(today()))}.</p></section>`}
+function settings(){return `<h2>⚙ Configuración</h2>${diskPanel()}${githubPanel()}<section class="panel"><h3>Respaldo de información</h3><p class="muted">Descargá un respaldo antes de borrar datos del navegador o para importar un historial anterior.</p><button onclick="exportJSON()">Descargar respaldo JSON</button> <label style="margin-top:16px">Importar respaldo JSON</label><input type="file" accept="application/json,.json" onchange="importJSON(event)"><p><button onclick="if(confirm('¿Restaurar datos iniciales? Se perderán los cambios locales.')){data=structuredClone(initial);data.tracking=[];data.settings={weekStartDay:6,startWeight:70,heightCm:null,planStartDate:today()};selectedWeek=weekStart(today());save()}">Restaurar datos iniciales</button></p></section><p id="save-status" class="muted" aria-live="polite">Los cambios se guardan al pulsar Guardar. Se conservan en este navegador.</p><section class="panel"><h3>Datos personales y objetivo</h3><p class="muted">Estos valores se usan como referencia para el resumen general. Cambiarlos no modifica las mediciones históricas.</p><form onsubmit="setProfile(event)"><div class="formgrid"><div><label for="startWeight">Peso inicial (kg)</label><input id="startWeight" name="startWeight" type="number" min="1" max="500" step="0.1" value="${esc(data.settings.startWeight??'')}" required></div><div><label for="heightCm">Altura (cm)</label><input id="heightCm" name="heightCm" type="number" min="50" max="250" step="0.1" placeholder="Ej.: 165" value="${esc(data.settings.heightCm??'')}"></div><div><label for="targetWeight">Peso objetivo (kg)</label><input id="targetWeight" name="targetWeight" type="number" min="1" max="500" step="0.1" value="${esc(data.goals.weight??'')}" required></div></div><p><button class="primary" type="submit">Guardar datos personales</button></p><p class="muted">Los cambios se aplican al pulsar Guardar.</p></form></section><section class="panel"><h3>Inicio del plan y de las semanas</h3><p class="muted">La Semana 1 contiene la fecha de inicio del plan y comienza el día de semana que elijas. Cada semana tiene 7 días consecutivos. Los registros anteriores se conservan.</p><form onsubmit="setPlanStart(event)"><label for="planStartDate">Fecha de inicio del plan</label><input id="planStartDate" type="date" name="planStartDate" value="${esc(data.settings.planStartDate)}" required style="max-width:320px"><p><button class="primary" type="submit">Guardar inicio del plan</button></p></form><p class="muted">Podés cambiar el primer día de la semana sin modificar la fecha de inicio del plan. La Semana 1 es la que contiene la fecha de inicio del plan. Se conservan los registros originales.</p><form onsubmit="setSettings(event)"><label for="weekStartDay">Primer día de la semana</label><select id="weekStartDay" name="weekStartDay" style="max-width:320px">${dayNames.map((name,i)=>`<option value="${i}" ${data.settings.weekStartDay===i?'selected':''}>${name.charAt(0).toUpperCase()+name.slice(1)}</option>`).join('')}</select><p><button class="primary" type="submit">Guardar inicio de semana</button></p><p class="muted">Al pulsar Guardar se reorganizan todas las semanas.</p></form><p id="week-save-confirmation" class="muted" role="status">Actual: ${dayNames[data.settings.weekStartDay]} a ${dayNames[(data.settings.weekStartDay+6)%7]}. Semana actual: ${weekLabel(weekStart(today()))}.</p></section>`}
 function autoProfile(e,refresh=false){const f=e.currentTarget;const a=f.elements.startWeight,b=f.elements.targetWeight,h=f.elements.heightCm;const start=Number(a.value),goal=Number(b.value),height=h.value.trim()===''?null:Number(h.value);if(!a.value||!b.value||!f.checkValidity()||!Number.isFinite(start)||start<=0||!Number.isFinite(goal)||goal<=0||height!==null&&(!Number.isFinite(height)||height<50||height>250))return;data.settings.startWeight=start;data.settings.heightCm=height;data.goals.weight=goal;if(persist()&&refresh)render()}function autoGoals(e,refresh=false){const f=e.currentTarget;const w=f.elements.weight;if(!w.value||!f.checkValidity())return;data.goals={weight:Number(w.value),notes:f.elements.notes.value};if(persist()&&refresh)render()}
 function setProfile(e){const v=values(e),start=Number(v.startWeight),goal=Number(v.targetWeight),height=v.heightCm.trim()===''?null:Number(v.heightCm);if(!Number.isFinite(start)||start<=0||!Number.isFinite(goal)||goal<=0||(height!==null&&(!Number.isFinite(height)||height<50||height>250))){alert('Revisá los valores ingresados.');return}data.settings.startWeight=start;data.settings.heightCm=height;data.goals.weight=goal;if(persist()){render();alert("Datos personales guardados correctamente.")}}
 
@@ -340,8 +340,167 @@ function downloadPlanPdf(){window.print()}
 <section class="plan-section" id="plan-habitos"><div class="plan-section-head"><div><h3>✨ Organización y seguimiento</h3><p>Consejos prácticos incluidos en tu plan.</p></div></div><div class="plan-reference-grid"><div><div class="plan-step"><span>1</span><b>Preparar con anticipación</b></div><p class="plan-small">Cocinar arroz, papa y fideos; dejar verduras cortadas y proteínas porcionadas. Preparar huevos duros y aprovechar la cena para el almuerzo siguiente.</p></div><div><div class="plan-step"><span>2</span><b>Registrar la evolución</b></div><p class="plan-small">Pesarte una vez por semana, por la mañana y en ayunas, en condiciones similares. Fotos opcionales cada dos semanas. Mate, té e infusiones sin azúcar cuentan como hidratación.</p></div></div><div class="plan-note" style="margin-top:14px">El objetivo de esta pantalla es ayudarte a seguir la estructura del PDF. Las calorías indicadas corresponden al plan, no a un cálculo de tus comidas registradas.</div></section>`}
 
 function embeddedPhoto(photo){return typeof photo==='string'&&/^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/=]+$/i.test(photo)?photo:''}
-function renderIndividualPhotos(){const host=document.getElementById('app');if(!host||document.getElementById('individual-photo-panel'))return;data.weeklyPhotos=data.weeklyPhotos||{};const photos=data.weeklyPhotos[selectedWeek]||[];const labels=['Frente','Dorso','Lateral','Atrás'];const panel=document.createElement('section');panel.id='individual-photo-panel';panel.className='panel individual-photo-panel';panel.innerHTML='<div class="row"><div><h3>Fotos de la semana</h3><p class="muted">Cargá o reemplazá cada foto por separado.</p></div><span class="tag">'+selectedWeek+'</span></div><div class="individual-photo-grid">'+labels.map((label,i)=>'<article class="individual-photo-card">'+(embeddedPhoto(photos[i])?'<img src="'+embeddedPhoto(photos[i])+'" alt="Foto '+label+'">':'<div class="photo-placeholder">Sin foto<br>'+label+'</div>')+'<button type="button" onclick="document.getElementById(\'individual-photo-'+i+'\').click()">'+(photos[i]?'Cambiar':'Cargar')+' '+label+'</button><input id="individual-photo-'+i+'" type="file" accept="image/*" hidden onchange="saveIndividualPhoto(event,'+i+')"></article>').join('')+'</div>';host.appendChild(panel)}function saveIndividualPhoto(event,index){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{data.weeklyPhotos=data.weeklyPhotos||{};const photos=data.weeklyPhotos[selectedWeek]||[];photos[index]=reader.result;data.weeklyPhotos[selectedWeek]=photos;if(persist())render()};reader.readAsDataURL(file);event.target.value=''}new MutationObserver(()=>renderIndividualPhotos()).observe(document.getElementById('app'),{childList:true});function render(){if(tab==='summary')tab='dashboard';nav();document.getElementById('app').innerHTML=(tab==='week'?weekPicker(true):'')+(tab==='week'?'<section id="week-editor" tabindex="-1" aria-label="Formulario de registro seleccionado">'+weekContent()+'</section>':({dashboard,goals,plan:nutritionPlan,settings}[tab]||dashboard)())}function values(e){if(e.type==='submit')e.preventDefault();const form=e.currentTarget?.tagName==='FORM'?e.currentTarget:e.target.closest('form');if(!form)throw new Error('Formulario no encontrado');return Object.fromEntries(new FormData(form).entries())}function addMeasure(e){const v=values(e);if(!checkWeekDate(v.date))return;const m={id:newId(),date:v.date};Object.keys(fields).forEach(k=>{if(v[k]!=='')m[k]=Number(v[k])});if(!Object.keys(fields).some(k=>k in m)){alert('Ingresá al menos una medida');return}data.measurements.push(m);save()}function editMeasure(id){const index=data.measurements.findIndex(x=>(x.id||x.date)===id);if(index<0)return;const current=data.measurements[index],date=prompt('Fecha de la medición:',current.date);if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)||!checkWeekDate(date))return;const next={...current,date};for(const [key,label] of Object.entries(fields)){const value=prompt(label+' (dejá vacío para borrar):',current[key]??'');if(value===null)return;if(value.trim()==='')delete next[key];else if(!Number.isFinite(Number(value))||Number(value)<0){alert('Ingresá un número válido para '+label+'.');return}else next[key]=Number(value)}if(!Object.keys(fields).some(k=>k in next)){alert('Ingresá al menos una medida.');return}data.measurements[index]=next;save()}function weeklyPhotoCards(){const photos=(data.weeklyPhotos||{})[selectedWeek]||[];const labels=['Frente','Dorso','Lateral','Atrás'];return labels.map((label,i)=>embeddedPhoto(photos[i])?`<figure class="photo-card"><img src="${embeddedPhoto(photos[i])}" alt="Foto ${label} de la semana"><figcaption>${label}</figcaption></figure>`:`<div class="photo-card photo-empty"><span>${label}<br>Sin foto</span></div>`).join('')}function saveWeeklyPhotos(e){const files=[...e.target.files].slice(0,4);if(!files.length)return;Promise.all(files.map(file=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)}))).then(photos=>{data.weeklyPhotos=data.weeklyPhotos||{};data.weeklyPhotos[selectedWeek]=photos;if(persist())render()}).catch(()=>alert('No se pudieron cargar las fotos.'));e.target.value=''}function addMeal(e){const v=values(e);if(!checkWeekDate(v.date))return;data.meals.push({...v,id:newId()});save()}function addActivity(e){const v=values(e);if(!checkWeekDate(v.date))return;data.activity.push({...v,id:newId(),minutes:v.minutes===''?null:Number(v.minutes),steps:v.steps===''?null:Number(v.steps)});save()}function setGoals(e){const v=values(e);data.goals={weight:Number(v.weight),notes:v.notes};save()}function removeRecord(type,id){if(!confirm('¿Eliminar este registro?'))return;let idx=id.startsWith('legacy:')?Number(id.slice(7)):data[type].findIndex(x=>(x.id||x.date)===id);if(type==='measurements'&&!id.startsWith('legacy:'))idx=data[type].findIndex(x=>(x.id||x.date)===id);if(idx>=0){data[type].splice(idx,1);save()}}function download(name,content,mime){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type:mime}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}function exportJSON(){download('descenso-respaldo.json',JSON.stringify(data,null,2),'application/json')}function exportCSV(){const rows=[['fecha',...Object.keys(fields)],...ordered(data.measurements).map(x=>[x.date,...Object.keys(fields).map(k=>x[k]??'')])];download('descenso-mediciones.csv','\ufeff'+rows.map(r=>r.join(';')).join('\n'),'text/csv;charset=utf-8')}async function importJSON(e){try{const x=JSON.parse(await e.target.files[0].text());if(!validBackup(x))throw Error('Formato inválido');if(confirm('¿Reemplazar los datos actuales por el respaldo? Se descargará una copia de los datos actuales antes de reemplazarlos.')){backupBeforeReplace();data=x;if(!Array.isArray(data.tracking))data.tracking=[];if(!Array.isArray(data.weeklyReports))data.weeklyReports=[];data.settings={weekStartDay:6,planStartDate:today(),...(data.settings||{})};selectedWeek=weekStart(today());save()}}catch(err){alert('No se pudo importar: '+err.message)}}
+function renderIndividualPhotos(){const host=document.getElementById('app');if(!host||document.getElementById('individual-photo-panel'))return;data.weeklyPhotos=data.weeklyPhotos||{};const photos=data.weeklyPhotos[selectedWeek]||[];const labels=['Frente','Dorso','Lateral','Atrás'];const panel=document.createElement('section');panel.id='individual-photo-panel';panel.className='panel individual-photo-panel';panel.innerHTML='<div class="row"><div><h3>Fotos de la semana</h3><p class="muted">Cargá o reemplazá cada foto por separado.</p></div><span class="tag">'+selectedWeek+'</span></div><div class="individual-photo-grid">'+labels.map((label,i)=>'<article class="individual-photo-card">'+(embeddedPhoto(photos[i])?'<img src="'+embeddedPhoto(photos[i])+'" alt="Foto '+label+'">':'<div class="photo-placeholder">Sin foto<br>'+label+'</div>')+'<button type="button" onclick="document.getElementById(\'individual-photo-'+i+'\').click()">'+(photos[i]?'Cambiar':'Cargar')+' '+label+'</button><input id="individual-photo-'+i+'" type="file" accept="image/*" hidden onchange="saveIndividualPhoto(event,'+i+')"></article>').join('')+'</div>';host.appendChild(panel)}function saveIndividualPhoto(event,index){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{data.weeklyPhotos=data.weeklyPhotos||{};const photos=data.weeklyPhotos[selectedWeek]||[];photos[index]=reader.result;data.weeklyPhotos[selectedWeek]=photos;if(persist())render()};reader.readAsDataURL(file);event.target.value=''}new MutationObserver(()=>renderIndividualPhotos()).observe(document.getElementById('app'),{childList:true});function render(){if(tab==='summary')tab='dashboard';nav();document.getElementById('app').innerHTML=(tab==='week'?weekPicker(true):'')+(tab==='week'?'<section id="week-editor" tabindex="-1" aria-label="Formulario de registro seleccionado">'+weekContent()+'</section>':({dashboard,goals,plan:nutritionPlan,settings}[tab]||dashboard)())}function values(e){if(e.type==='submit')e.preventDefault();const form=e.currentTarget?.tagName==='FORM'?e.currentTarget:e.target.closest('form');if(!form)throw new Error('Formulario no encontrado');return Object.fromEntries(new FormData(form).entries())}function addMeasure(e){const v=values(e);if(!checkWeekDate(v.date))return;const m={id:newId(),date:v.date};Object.keys(fields).forEach(k=>{if(v[k]!=='')m[k]=Number(v[k])});if(!Object.keys(fields).some(k=>k in m)){alert('Ingresá al menos una medida');return}data.measurements.push(m);save()}function editMeasure(id){const index=data.measurements.findIndex(x=>(x.id||x.date)===id);if(index<0)return;const current=data.measurements[index],date=prompt('Fecha de la medición:',current.date);if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)||!checkWeekDate(date))return;const next={...current,date};for(const [key,label] of Object.entries(fields)){const value=prompt(label+' (dejá vacío para borrar):',current[key]??'');if(value===null)return;if(value.trim()==='')delete next[key];else if(!Number.isFinite(Number(value))||Number(value)<0){alert('Ingresá un número válido para '+label+'.');return}else next[key]=Number(value)}if(!Object.keys(fields).some(k=>k in next)){alert('Ingresá al menos una medida.');return}data.measurements[index]=next;save()}function weeklyPhotoCards(){const photos=(data.weeklyPhotos||{})[selectedWeek]||[];const labels=['Frente','Dorso','Lateral','Atrás'];return labels.map((label,i)=>embeddedPhoto(photos[i])?`<figure class="photo-card"><img src="${embeddedPhoto(photos[i])}" alt="Foto ${label} de la semana"><figcaption>${label}</figcaption></figure>`:`<div class="photo-card photo-empty"><span>${label}<br>Sin foto</span></div>`).join('')}function saveWeeklyPhotos(e){const files=[...e.target.files].slice(0,4);if(!files.length)return;Promise.all(files.map(file=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)}))).then(photos=>{data.weeklyPhotos=data.weeklyPhotos||{};data.weeklyPhotos[selectedWeek]=photos;if(persist())render()}).catch(()=>alert('No se pudieron cargar las fotos.'));e.target.value=''}function addMeal(e){const v=values(e);if(!checkWeekDate(v.date))return;data.meals.push({...v,id:newId()});save()}function addActivity(e){const v=values(e);if(!checkWeekDate(v.date))return;data.activity.push({...v,id:newId(),minutes:v.minutes===''?null:Number(v.minutes),steps:v.steps===''?null:Number(v.steps)});save()}function setGoals(e){const v=values(e);data.goals={weight:Number(v.weight),notes:v.notes};save()}function removeRecord(type,id){if(!confirm('¿Eliminar este registro?'))return;let idx=id.startsWith('legacy:')?Number(id.slice(7)):data[type].findIndex(x=>(x.id||x.date)===id);if(type==='measurements'&&!id.startsWith('legacy:'))idx=data[type].findIndex(x=>(x.id||x.date)===id);if(idx>=0){data[type].splice(idx,1);save()}}function download(name,content,mime){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type:mime}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}function exportJSON(){download('descenso-respaldo.json',JSON.stringify(data,null,2),'application/json')}function exportCSV(){const rows=[['fecha',...Object.keys(fields)],...ordered(data.measurements).map(x=>[x.date,...Object.keys(fields).map(k=>x[k]??'')])];download('descenso-mediciones.csv','\ufeff'+rows.map(r=>r.join(';')).join('\n'),'text/csv;charset=utf-8')}async function importJSON(e){try{const x=JSON.parse(await e.target.files[0].text());if(!validBackup(x))throw Error('Formato inválido');if(isSupabaseSeed(x)){const previous=data;const added=mergeSupabaseMeals(x);if(persist()){render();alert('Comidas incorporadas: '+added)}else data=previous;return}if(confirm('¿Reemplazar los datos actuales por el respaldo? Se descargará una copia de los datos actuales antes de reemplazarlos.')){backupBeforeReplace();data=x;if(!Array.isArray(data.tracking))data.tracking=[];if(!Array.isArray(data.weeklyReports))data.weeklyReports=[];data.settings={weekStartDay:6,planStartDate:today(),...(data.settings||{})};selectedWeek=weekStart(today());save()}}catch(err){alert('No se pudo importar: '+err.message)}}
 // Sincronización opcional con Supabase. La copia local nunca se elimina.
+const diskFilename = 'descenso-datos.json';
+const diskState = {file:null, revision:null, pending:null, writing:false, linking:false, message:''};
+
+function diskPanel(){
+ return `<section class="panel"><h3>Copia en tu Mac</h3>
+ <p class="muted">Elegí la carpeta de Descenso. La app guarda todos tus registros y fotos en <b>${diskFilename}</b> cada vez que hacés un cambio.</p>
+ <button type="button" onclick="chooseLocalFolder()">${diskState.file?'Cambiar carpeta local':'Elegir carpeta local'}</button>
+ <p id="disk-status" role="status" aria-live="polite">${esc(diskState.message || 'Elegí una carpeta para activar el guardado automático.')}</p></section>`;
+}
+
+function diskStatus(message){
+ diskState.message=message;
+ const status=document.getElementById('disk-status');
+ if(status) status.textContent=message;
+}
+
+function diskSnapshot(){return JSON.stringify(data,null,2)+'\n'}
+
+function isSupabaseSeed(value){
+ return value?.importSource==='supabase-meals-2026-10-31' && validBackup(value);
+}
+
+function mergeSupabaseMeals(incoming){
+ const present=new Set(data.meals.map(meal=>JSON.stringify([meal.date,meal.type])));
+ const missing=incoming.meals.filter(meal=>!present.has(JSON.stringify([meal.date,meal.type])));
+ data={...data,meals:[...data.meals,...missing]};
+ return missing.length;
+}
+
+
+function folderDatabase(){
+ return new Promise((resolve,reject)=>{
+  const request=indexedDB.open('descenso-local-folder',1);
+  request.onupgradeneeded=()=>request.result.createObjectStore('settings');
+  request.onsuccess=()=>resolve(request.result);
+  request.onerror=()=>reject(request.error);
+ });
+}
+
+async function folderPreference(folder){
+ const db=await folderDatabase();
+ try {
+  return await new Promise((resolve,reject)=>{
+   const tx=db.transaction('settings',folder?'readwrite':'readonly');
+   const store=tx.objectStore('settings');
+   const request=folder?store.put(folder,'folder'):store.get('folder');
+   tx.oncomplete=()=>resolve(request.result);
+   tx.onerror=()=>reject(tx.error);
+   tx.onabort=()=>reject(tx.error);
+  });
+ } finally {db.close()}
+}
+
+async function restoreFolderLink(){
+ if(typeof window.showDirectoryPicker!=='function'){
+  diskStatus('Esta apertura de Chrome no permite vincular una carpeta. Podés descargar el respaldo JSON desde Configuración.');
+  return;
+ }
+ try {
+  const folder=await folderPreference();
+  if(!folder || diskState.linking || diskState.file) return;
+  if(await folder.queryPermission({mode:'readwrite'})!=='granted'){
+   diskStatus('Elegí de nuevo la carpeta de Descenso para reactivar el guardado.');
+   return;
+  }
+  const file=await folder.getFileHandle(diskFilename);
+  const revision=await (await file.getFile()).text();
+  if(diskState.linking || diskState.file) return;
+  if(revision!==diskSnapshot()){
+   diskStatus('El archivo local y el navegador tienen datos distintos. Elegí la carpeta para revisar qué copia cargar.');
+   return;
+  }
+  diskState.file=file;
+  diskState.revision=revision;
+  diskStatus('Copia automática activa en '+diskFilename+'.');
+ } catch {
+  if(!diskState.linking && !diskState.file) diskStatus('Elegí la carpeta de Descenso para activar el guardado automático.');
+ }
+}
+
+async function chooseLocalFolder(){
+ if(diskState.linking || diskState.writing) return;
+ if(typeof window.showDirectoryPicker!=='function'){
+  diskStatus('Abrí el HTML descargado en Chrome. Mientras tanto podés usar Descargar respaldo JSON.');
+  return;
+ }
+ diskState.linking=true;
+ try {
+  const folder=await window.showDirectoryPicker({id:'descenso',mode:'readwrite'});
+  let file;
+  let revision;
+  try {
+   file=await folder.getFileHandle(diskFilename);
+   revision=await (await file.getFile()).text();
+  } catch(error) {
+   if(error.name!=='NotFoundError') throw error;
+   file=await folder.getFileHandle(diskFilename,{create:true});
+   revision=await (await file.getFile()).text();
+  }
+  if(revision && revision!==diskSnapshot()){
+   const incoming=JSON.parse(revision);
+   if(!validBackup(incoming)) throw Error('El JSON local no tiene un formato válido de Descenso.');
+   if(isSupabaseSeed(incoming)){
+    mergeSupabaseMeals(incoming);
+   }else{
+    if(!confirm('Ya hay un respaldo en esta carpeta. ¿Cargar sus datos? Se descargará una copia de los registros que están abiertos ahora.')) return;
+    backupBeforeReplace();
+    data=incoming;
+    data.tracking=Array.isArray(data.tracking)?data.tracking:[];
+    data.weeklyReports=Array.isArray(data.weeklyReports)?data.weeklyReports:[];
+    data.weeklyPhotos=data.weeklyPhotos||{};
+    data.settings={weekStartDay:6,startWeight:70,planStartDate:today(),mealOptions:{},...(data.settings||{})};
+    selectedWeek=weekStart(today());
+   }
+   try {localStorage.setItem(KEY,JSON.stringify(data))}
+   catch {diskStatus('El navegador quedó sin espacio. El archivo local conserva tus datos.')}
+  }
+  diskState.file=file;
+  diskState.revision=revision;
+  await writeDiskCopy();
+  try {await folderPreference(folder)} catch { /* Chrome puede pedir que vuelvas a elegir la carpeta. */ }
+  render();
+ } catch(error) {
+  if(error.name!=='AbortError') diskStatus('No se pudo vincular la carpeta: '+error.message);
+ } finally {diskState.linking=false}
+}
+
+async function writeDiskCopy(){
+ if(!diskState.file) return;
+ diskState.pending=diskSnapshot();
+ if(diskState.writing) return;
+ diskState.writing=true;
+ diskStatus('Guardando la copia en tu Mac…');
+ try {
+  while(diskState.pending!==null){
+   const snapshot=diskState.pending;
+   diskState.pending=null;
+   if(snapshot===diskState.revision) continue;
+   const current=await (await diskState.file.getFile()).text();
+   if(current!==diskState.revision) throw Error('El archivo cambió fuera de Descenso.');
+   const writer=await diskState.file.createWritable();
+   try {await writer.write(snapshot);await writer.close()}
+   catch(error){await writer.abort().catch(()=>{});throw error}
+   diskState.revision=snapshot;
+  }
+  diskStatus('Copia guardada en '+diskFilename+'.');
+ } catch(error) {
+  diskState.file=null;
+  diskState.pending=null;
+  diskStatus('La copia en disco quedó pendiente. '+error.message+' Volvé a elegir la carpeta o descargá el respaldo JSON.');
+ } finally {diskState.writing=false}
+}
+
+window.addEventListener('beforeunload',event=>{
+ if(!diskState.writing) return;
+ event.preventDefault();
+ event.returnValue='';
+});
+
 const githubRepo = 'rosariogebala-cyber/descenso';
 const githubPath = '/contents/datos/descenso.json';
 const githubState = {token:'', busy:false, message:''};
@@ -451,6 +610,13 @@ function githubLoad(){
   const incoming=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
   if(incoming===null) return 'Todavía no hay registros en GitHub. Podés guardar tus registros.';
   if(!validBackup(incoming)) throw Error('El JSON de GitHub no tiene un formato de Descenso válido.');
+  if(isSupabaseSeed(incoming)){
+   const previous=data;
+   const added=mergeSupabaseMeals(incoming);
+   if(!persist()){data=previous;throw Error('No se pudo guardar el historial en este navegador.')}
+   localStorage.setItem(githubRevisionKey,sha);
+   return added ? 'Se incorporaron '+added+' comidas de Supabase. Conservaste tu historial actual.' : 'Ya tenés las comidas del respaldo de Supabase.';
+  }
   if(!confirm('¿Traer el respaldo de GitHub? Se descargará una copia de tus datos actuales antes de reemplazarlos en este navegador.')) return 'Carga cancelada.';
   backupBeforeReplace();
   const previous=data;
@@ -489,4 +655,5 @@ function githubSave(){
 }
 
 render();
+restoreFolderLink();
 </script></body></html>
