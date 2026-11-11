@@ -27,7 +27,7 @@ function newId(){if(globalThis.crypto?.randomUUID)return crypto.randomUUID();ret
 const KEY='descenso-v1';const initial={measurements:[],meals:[],activity:[],goals:{weight:68,notes:''}};
 
 function safeRecordId(id,fallback){return typeof id==="string"&&/^[a-z0-9:_-]+$/i.test(id)?id:fallback}
-function validBackup(x){return !!x&&typeof x==='object'&&!Array.isArray(x)&&['measurements','meals','activity'].every(k=>Array.isArray(x[k])&&x[k].length<100000&&x[k].every(v=>v&&typeof v==='object'&&!Array.isArray(v)&&typeof v.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v.date)))&&x.goals&&typeof x.goals==='object'&&Number.isFinite(Number(x.goals.weight))&&Number(x.goals.weight)>0&&(!x.tracking||Array.isArray(x.tracking))&&(!x.weeklyReports||Array.isArray(x.weeklyReports))}function safeBackupName(){return 'descenso-respaldo-previo-'+new Date().toISOString().slice(0,10)+'.json'}function backupBeforeReplace(){download(safeBackupName(),JSON.stringify(data,null,2),'application/json')}let data;try{const stored=JSON.parse(localStorage.getItem(KEY));data=validBackup(stored)?stored:structuredClone(initial);if(stored&&!validBackup(stored))console.warn('Datos locales con formato inesperado; se evita procesarlos')}catch{data=structuredClone(initial)};let tab='dashboard',weekSection='measurements',metric='weight',selectedWeek=null,compareCategory='measurements',compareMetric='weight',compareLimit='8',selectedMealDay=null; data.settings={weekStartDay:6,startWeight:70,heightCm:null,planStartDate:today(),mealOptions:{},...(data.settings||{})};data.weeklyPhotos=(data.weeklyPhotos&&typeof data.weeklyPhotos==='object')?data.weeklyPhotos:{};data.settings.mealOptions={...(data.settings.mealOptions||{})};['Almuerzo','Cena'].forEach(type=>{if(!Array.isArray(data.settings.mealOptions[type]))data.settings.mealOptions[type]=[]});data.settings.weekStartDay=Number(data.settings.weekStartDay);if(!Number.isInteger(data.settings.weekStartDay)||data.settings.weekStartDay<0||data.settings.weekStartDay>6)data.settings.weekStartDay=1;if(!/^\d{4}-\d{2}-\d{2}$/.test(data.settings.planStartDate))data.settings.planStartDate=today();/* Set Saturday once for this app update; preserve all other user data. */try{if(localStorage.getItem('descenso-saturday-default-v24')!=='done'){data.settings.weekStartDay=6;localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem('descenso-saturday-default-v24','done')}}catch(e){console.warn('No se pudo persistir la preferencia de sábado',e)}if(!Array.isArray(data.tracking))data.tracking=[];if(!Array.isArray(data.weeklyReports))data.weeklyReports=[];const fields={weight:'Peso (kg)',armLeft:'Bíceps izquierdo (cm)',armRight:'Bíceps derecho (cm)',chest:'Pecho (cm)',waist:'Cintura (cm)',hip:'Cadera (cm)',glute:'Glúteos (cm)',thighLeft:'Muslo izquierdo (cm)',thighRight:'Muslo derecho (cm)'};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const fmt=x=>x==null?'—':Number(x).toLocaleString('es-AR',{maximumFractionDigits:2});function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}function today(){return isoDate(new Date())}const ordered=arr=>[...arr].sort((a,b)=>a.date.localeCompare(b.date));const last=()=>ordered(data.measurements).at(-1)||{};const first=()=>ordered(data.measurements)[0]||{};function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));const saved=JSON.parse(localStorage.getItem(KEY));if(!saved||JSON.stringify(saved)!==JSON.stringify(data))throw Error('No se verificó el guardado');showSaved();writeDiskCopy();return true}catch(e){if(diskState.file){writeDiskCopy();return true}alert('No se pudieron guardar los cambios: '+e.message+'. Exportá un respaldo.');return false}}function showSaved(){let el=document.getElementById('save-status');if(el){el.textContent='✓ Cambios guardados en este navegador';el.setAttribute('aria-live','polite')}}function save(){if(persist())render()}function nav(){document.getElementById('nav').innerHTML=[['dashboard','Dashboard'],['week','Semana'],['goals','Objetivos'],['plan','📋 Mi plan'],['settings','⚙ Configuración']].map(([id,n])=>`<button class="${tab===id?'active':''}" onclick="tab='${id}';render()">${n}</button>`).join('')}
+function validBackup(x){return !!x&&typeof x==='object'&&!Array.isArray(x)&&['measurements','meals','activity'].every(k=>Array.isArray(x[k])&&x[k].length<100000&&x[k].every(v=>v&&typeof v==='object'&&!Array.isArray(v)&&typeof v.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v.date)))&&x.goals&&typeof x.goals==='object'&&Number.isFinite(Number(x.goals.weight))&&Number(x.goals.weight)>0&&(!x.tracking||Array.isArray(x.tracking))&&(!x.weeklyReports||Array.isArray(x.weeklyReports))}function safeBackupName(){return 'descenso-respaldo-previo-'+new Date().toISOString().slice(0,10)+'.json'}function backupBeforeReplace(){download(safeBackupName(),JSON.stringify(data,null,2),'application/json')}let data;try{const stored=JSON.parse(localStorage.getItem(KEY));data=validBackup(stored)?stored:structuredClone(initial);if(stored&&!validBackup(stored))console.warn('Datos locales con formato inesperado; se evita procesarlos')}catch{data=structuredClone(initial)};let tab='dashboard',weekSection='measurements',metric='weight',selectedWeek=null,compareCategory='measurements',compareMetric='weight',compareLimit='8',selectedMealDay=null; data.settings={weekStartDay:6,startWeight:70,heightCm:null,planStartDate:today(),mealOptions:{},...(data.settings||{})};data.weeklyPhotos=(data.weeklyPhotos&&typeof data.weeklyPhotos==='object')?data.weeklyPhotos:{};data.settings.mealOptions={...(data.settings.mealOptions||{})};['Almuerzo','Cena'].forEach(type=>{if(!Array.isArray(data.settings.mealOptions[type]))data.settings.mealOptions[type]=[]});data.settings.weekStartDay=Number(data.settings.weekStartDay);if(!Number.isInteger(data.settings.weekStartDay)||data.settings.weekStartDay<0||data.settings.weekStartDay>6)data.settings.weekStartDay=1;if(!/^\d{4}-\d{2}-\d{2}$/.test(data.settings.planStartDate))data.settings.planStartDate=today();/* Set Saturday once for this app update; preserve all other user data. */try{if(localStorage.getItem('descenso-saturday-default-v24')!=='done'){data.settings.weekStartDay=6;localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem('descenso-saturday-default-v24','done')}}catch(e){console.warn('No se pudo persistir la preferencia de sábado',e)}if(!Array.isArray(data.tracking))data.tracking=[];if(!Array.isArray(data.weeklyReports))data.weeklyReports=[];const fields={weight:'Peso (kg)',armLeft:'Bíceps izquierdo (cm)',armRight:'Bíceps derecho (cm)',chest:'Pecho (cm)',waist:'Cintura (cm)',hip:'Cadera (cm)',glute:'Glúteos (cm)',thighLeft:'Muslo izquierdo (cm)',thighRight:'Muslo derecho (cm)'};const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const fmt=x=>x==null?'—':Number(x).toLocaleString('es-AR',{maximumFractionDigits:2});function isoDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}function today(){return isoDate(new Date())}const ordered=arr=>[...arr].sort((a,b)=>a.date.localeCompare(b.date));const last=()=>ordered(data.measurements).at(-1)||{};const first=()=>ordered(data.measurements)[0]||{};function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));const saved=JSON.parse(localStorage.getItem(KEY));if(!saved||JSON.stringify(saved)!==JSON.stringify(data))throw Error('No se verificó el guardado');showSaved();writeDiskCopy();githubQueue();return true}catch(e){if(diskState.file){writeDiskCopy();return true}alert('No se pudieron guardar los cambios: '+e.message+'. Exportá un respaldo.');return false}}function showSaved(){let el=document.getElementById('save-status');if(el){el.textContent='✓ Cambios guardados en este navegador';el.setAttribute('aria-live','polite')}}function save(){if(persist())render()}function nav(){document.getElementById('nav').innerHTML=[['dashboard','Dashboard'],['week','Semana'],['goals','Objetivos'],['plan','📋 Mi plan'],['settings','⚙ Configuración']].map(([id,n])=>`<button class="${tab===id?'active':''}" onclick="tab='${id}';render()">${n}</button>`).join('')}
 function weeklySummary(){const ms=ordered(data.measurements).filter(inWeek),food=data.meals.filter(inWeek),acts=data.activity.filter(inWeek),tracks=(data.tracking||[]).filter(inWeek),latest=ms.at(-1),prior=ordered(data.measurements).filter(x=>x.date<selectedWeek).at(-1);return `<h2>Resumen · ${weekLabel(selectedWeek)}</h2><p class="muted">Resumen de los registros de la semana seleccionada.</p><div class="cards"><div class="card"><small>Mediciones</small><div class="metric">${ms.length}</div><small>${latest?.weight!=null?'Último peso: '+fmt(latest.weight)+' kg':'Sin peso registrado'}</small></div><div class="card"><small>Comidas</small><div class="metric">${food.length}</div><small>${new Set(food.map(x=>x.date)).size} días con registros</small></div><div class="card"><small>Actividades</small><div class="metric">${acts.length}</div><small>${acts.reduce((n,x)=>n+(Number(x.steps)||0),0).toLocaleString('es-AR')} pasos registrados</small></div><div class="card"><small>Cambio de peso</small><div class="metric">${latest?.weight!=null&&prior?.weight!=null?(latest.weight-prior.weight>0?'+':'')+fmt(latest.weight-prior.weight)+' kg':'—'}</div><small>Respecto a la última medición anterior</small></div></div><section class="panel"><h3>Detalle de la semana</h3><p><b>Mediciones:</b> ${ms.length} registros</p><p><b>Comidas:</b> ${food.length} registros</p><p><b>Actividad:</b> ${acts.length} registros</p><p><b>Seguimiento:</b> ${tracks.length?"Completado":"Pendiente"}</p><button class="primary" onclick="tab='week';render()">Ver semana y editar registros →</button></section>`}
 function weekContent(){return ({measurements,meals,activity,tracking,weeklyReport}[weekSection]||measurements)()}
 function chart(key){const points=ordered(data.measurements).filter(x=>x[key]!==null&&x[key]!==undefined&&Number.isFinite(Number(x[key])));if(!points.length)return '<p class="muted">Todavía no hay registros para esta medida.</p>';const values=points.map(x=>x[key]),lo=Math.min(...values),hi=Math.max(...values),range=hi-lo||1;const W=650,H=220,pad=36;const xy=points.map((p,i)=>[(pad+(points.length===1?.5:i/(points.length-1))*(W-pad*2)),(H-pad-(p[key]-lo)/range*(H-pad*2))]);return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${esc(fields[key])}"><line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#d9dfeb"/><line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H-pad}" stroke="#d9dfeb"/><polyline points="${xy.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#4d79af" stroke-width="3"/>${xy.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#4d79af"><title>${points[i].date}: ${fmt(points[i][key])}</title></circle><text x="${p[0]}" y="${p[1]-12}" text-anchor="middle" font-size="12" fill="#375b8b">${fmt(points[i][key])}</text><text x="${p[0]}" y="${H-8}" text-anchor="middle" font-size="11" fill="#718096">${points[i].date.slice(5).split('-').reverse().join('/')}</text>`).join('')}</svg></div><p class="legend">Cada punto corresponde a un registro real; los días intermedios no fueron medidos.</p>`}
@@ -496,28 +496,28 @@ async function writeDiskCopy(){
 }
 
 window.addEventListener('beforeunload',event=>{
- if(!diskState.writing) return;
+ if(!diskState.writing && !githubState.pending && !githubState.saving) return;
  event.preventDefault();
  event.returnValue='';
 });
 
 const githubRepo = 'rosariogebala-cyber/descenso';
 const githubPath = '/contents/datos/descenso.json';
-const githubState = {token:'', busy:false, message:''};
+const githubState = {token:'', busy:false, message:'', auto:false, pending:false, saving:false};
 const githubRevisionKey = 'descenso-github-revision-v1';
 
 function githubPanel(){
  const disabled = githubState.busy ? ' disabled' : '';
  return `<section class="panel"><h3>Base de datos en GitHub</h3>
-  <p class="muted">Repositorio privado <b>${githubRepo}</b> · datos/descenso.json</p>
-  ${githubState.token ? `<p><button class="primary" onclick="githubSave()"${disabled}>Guardar en GitHub</button>
+  <p class="muted">Repositorio <b>${githubRepo}</b> · datos/descenso.json</p>
+  ${githubState.token ? `<p><button class="primary" onclick="githubEnableAuto()"${disabled}>${githubState.auto ? 'Sincronizar ahora' : 'Activar guardado automático'}</button>
   <button onclick="githubLoad()"${disabled}>Traer desde GitHub</button>
   <button onclick="githubDisconnect()"${disabled}>Desconectar</button></p>` : `<form onsubmit="githubConnect(event)">
   <label for="github-token">Clave de GitHub</label>
   <input id="github-token" name="token" type="password" autocomplete="off" spellcheck="false" required${disabled}>
   <p><button class="primary"${disabled}>Conectar con GitHub</button></p></form>
   <p class="muted">Usá un token de acceso limitado a Descenso, con Contents → Read and write. Se usa solo mientras esta pestaña esté abierta.</p>`}
-  <p class="muted">El guardado en GitHub es manual e incluye las fotos hasta un total de 900 KiB por respaldo. Los cambios también se guardan en este navegador.</p>
+  <p class="muted">Al activar el guardado automático, los registros y fotos del JSON quedan públicos en GitHub. La conexión dura hasta que cierres o recargues esta pestaña. Límite de 900 KiB por respaldo.</p>
   <p role="status" aria-live="polite">${esc(githubState.message)}</p></section>`;
 }
 
@@ -543,11 +543,11 @@ async function githubRequest(path, token, options={}){
  return response.json();
 }
 
-async function githubPrivateRepo(token){
+async function githubBackupRepo(token){
  const repo = await githubRequest('',token);
- if(repo.private!==true || repo.visibility!=='private' || repo.full_name?.toLowerCase()!==githubRepo
+ if(repo.full_name?.toLowerCase()!==githubRepo
     || repo.owner?.type!=='User' || !repo.default_branch){
-  throw Error('El respaldo requiere el repositorio personal Descenso en modo privado.');
+  throw Error('No se pudo verificar el repositorio de Descenso.');
  }
  return repo;
 }
@@ -559,7 +559,7 @@ async function githubRun(operation){
  render();
  try {githubState.message=await operation()}
  catch(error){githubState.message=error.message}
- finally {githubState.busy=false;render()}
+ finally {githubState.busy=false;render();githubFlush()}
 }
 
 function githubConnect(event){
@@ -569,14 +569,16 @@ function githubConnect(event){
  input.value='';
  if(!token) return;
  return githubRun(async()=>{
-  await githubPrivateRepo(token);
+  await githubBackupRepo(token);
   githubState.token=token;
-  return 'Conectado. Elegí si querés traer el respaldo o guardar tus registros.';
+  return 'Conectado. Si ya hay un respaldo, traelo antes de activar el guardado automático.';
  });
 }
 
 function githubDisconnect(){
  if(githubState.busy) return;
+ githubState.auto=false;
+ githubState.pending=false;
  githubState.token='';
  githubState.message='Desconectado. Tu copia del navegador sigue disponible.';
  render();
@@ -599,9 +601,11 @@ function githubBase64(bytes){
 }
 
 function githubLoad(){
- if(!githubState.token) return;
+ if(!githubState.token || githubState.busy) return;
+ githubState.auto=false;
+ githubState.pending=false;
  return githubRun(async()=>{
-  const repo=await githubPrivateRepo(githubState.token);
+  const repo=await githubBackupRepo(githubState.token);
   const file=await githubRead(repo.default_branch);
   const sha=githubFileSha(file);
   if(!sha) return 'Todavía no hay un respaldo en GitHub. Podés guardar tus registros.';
@@ -631,19 +635,43 @@ function githubLoad(){
  });
 }
 
-function githubSave(){
- if(!githubState.token) return;
+function githubEnableAuto(){
+ if(!githubState.token || githubState.busy) return;
+ if(!githubState.auto && !confirm('¿Activar el guardado automático? Tus registros y fotos se subirán a GitHub y quedarán públicos en el historial del repositorio.')) return;
+ githubState.auto=true;
+ githubQueue();
+}
+
+function githubQueue(){
+ if(!githubState.auto || !githubState.token) return;
+ githubState.pending=true;
+ queueMicrotask(githubFlush);
+}
+
+function githubFlush(){
+ if(!githubState.pending || githubState.busy || !githubState.auto) return;
+ githubState.pending=false;
+ githubState.saving=true;
  return githubRun(async()=>{
+  try {return await githubWriteBackup()}
+  catch(error){
+   githubState.pending=false;
+   throw error;
+  } finally {githubState.saving=false}
+ });
+}
+
+async function githubWriteBackup(){
   const bytes=new TextEncoder().encode(JSON.stringify(data,null,2)+'\n');
   if(bytes.length>900*1024) throw Error('El respaldo supera 900 KiB. Descargá un JSON local para conservar todas tus fotos.');
-  const repo=await githubPrivateRepo(githubState.token);
+  const repo=await githubBackupRepo(githubState.token);
   const branch=repo.default_branch;
   const file=await githubRead(branch);
   const sha=githubFileSha(file);
   const previous=localStorage.getItem(githubRevisionKey);
   const starter=file?.encoding==='base64' && file.content?.replace(/\s/g,'')==='bnVsbAo=';
   if((sha && sha!==previous && !(starter && !previous)) || (!sha && previous)) throw Error('El archivo de GitHub cambió o falta. Conservá una copia local y revisá el respaldo remoto antes de guardar.');
-  if(!confirm('¿Guardar tus registros y fotos en el repositorio privado rosariogebala-cyber/descenso? GitHub conserva versiones anteriores del JSON.')) return 'Guardado cancelado.';
+  if(file?.encoding==='base64' && file.content?.replace(/\s/g,'')===githubBase64(bytes)) return 'Registros al día en GitHub.';
   const result=await githubRequest(githubPath,githubState.token,{body:{
    message:'Actualizar respaldo de Descenso',content:githubBase64(bytes),branch,...(sha?{sha}:{})
   }});
@@ -651,7 +679,6 @@ function githubSave(){
   if(!/^[a-f0-9]{40}$/i.test(savedSha||'')) throw Error('GitHub no devolvió la versión del archivo. Revisá el repositorio.');
   localStorage.setItem(githubRevisionKey,savedSha);
   return 'Registros guardados en GitHub.';
- });
 }
 
 render();
