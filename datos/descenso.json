@@ -1,5 +1,4 @@
 {
-  "importSource": "supabase-meals-2026-10-31",
   "measurements": [],
   "meals": [
     {
@@ -91,5 +90,18 @@
   "goals": {
     "weight": 68,
     "notes": ""
-  }
+  },
+  "settings": {
+    "weekStartDay": 6,
+    "startWeight": 70,
+    "heightCm": null,
+    "planStartDate": "2026-11-11",
+    "mealOptions": {
+      "Almuerzo": [],
+      "Cena": []
+    }
+  },
+  "weeklyPhotos": {},
+  "tracking": [],
+  "weeklyReports": []
 }
