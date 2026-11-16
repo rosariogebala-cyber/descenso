@@ -1,18 +1,23 @@
 # Descenso
 
-Descargá `index.html` y abrilo con Chrome. La app guarda una copia en el navegador, puede escribir automáticamente un JSON en la carpeta que elijas y puede sincronizarse con este repositorio privado.
+App personal de seguimiento: comidas, peso, medidas, actividad, reportes semanales y el plan de alimentación (1660 kcal).
 
-## Copia en tu Mac
+Sitio: https://rosariogebala-cyber.github.io/descenso/
 
-1. Si tenés un historial en otra versión, descargá su respaldo JSON e importalo desde **Configuración** en esta versión.
-2. Guardá en tu carpeta de Descenso el JSON inicial incluido en `datos/descenso.json`, con el nombre `descenso-datos.json`. Si la carpeta ya tiene un archivo con ese nombre, conservalo e incorporá las comidas con **Importar respaldo JSON**, usando el JSON inicial.
-3. En **Configuración → Copia en tu Mac → Elegir carpeta local**, seleccioná la carpeta de Descenso y permití la escritura. El archivo local se actualiza cada vez que guardás un cambio. Chrome puede pedirte que elijas nuevamente la carpeta al reabrir la app.
+## Dónde están los datos
 
-El JSON inicial incorpora 14 comidas del respaldo de Supabase del 31 de octubre. Al leerlo, la app agrega las comidas que faltan por fecha y tipo y conserva las mediciones, fotos y otros registros que tengas abiertos.
+- **En cada navegador** (almacenamiento interno del sitio). Es la copia de trabajo.
+- **En el repositorio privado `descenso-datos`** (`descenso.json`). Es la copia compartida entre dispositivos.
 
-## Copia en GitHub
+Este repositorio es público y contiene solo el sitio (`index.html`). No guarda datos personales.
 
-1. Creá un [token de acceso de GitHub](https://github.com/settings/personal-access-tokens/new) limitado a **descenso**, con **Contents → Read and write**.
-2. Conectalo en **Configuración → Base de datos en GitHub**. Usá **Traer desde GitHub** para incorporar el respaldo. Después, **Guardar en GitHub** sincroniza tus registros.
+## Conectar un dispositivo (Mac, celular)
 
-El token se usa durante la sesión de la pestaña. Guardar en GitHub es manual y admite hasta 900 KiB por respaldo, incluidas las fotos. El archivo local no tiene ese límite. Si otro dispositivo actualiza el JSON remoto, la app bloquea el guardado hasta que traigas esa versión. Mantené el repositorio privado. GitHub conserva versiones anteriores de los datos.
+1. Creá un token de acceso de GitHub (fine-grained) con acceso solo a **descenso-datos** y permiso **Contents → Read and write**.
+2. En el sitio: **⚙ Configuración → Sincronización entre dispositivos**, pegá el token y tocá **Conectar este dispositivo**.
+
+El token queda guardado en ese navegador. El sitio sincroniza solo al abrirse, al volver a la pestaña y cada vez que guardás. Junta los registros de todos los dispositivos: los borrados se respetan y, si se edita lo mismo en dos lugares, gana la versión más reciente.
+
+## Respaldo
+
+En **⚙ Configuración** podés descargar un respaldo JSON en cualquier momento.
